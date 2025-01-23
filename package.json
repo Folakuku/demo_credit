@@ -6,7 +6,12 @@
         "start": "node ./dist/server.js",
         "start:build": "npm run build && npm start",
         "dev": "npx nodemon",
-        "build": "rimraf ./build && tsc"
+        "build": "rimraf ./build && tsc",
+        "migrate:up": "knex migrate:latest",
+        "migrate:down": "knex migrate:rollback",
+        "migrate:make": "knex migrate:make",
+        "seed": "knex seed:make",
+        "test": "jest"
     },
     "keywords": [],
     "author": "Folahanmi Ojokuku",

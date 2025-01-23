@@ -1,9 +1,9 @@
 import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
+import env from "./config/env";
+import logger from "./config/logger";
 
 class App {
     public app: Application;
@@ -24,7 +24,7 @@ class App {
 
     public listen() {
         this.app.listen(this.port, () => {
-            console.log(`Server running on port ${this.port}`);
+            logger.log(`${env.app_name} running on port ${this.port}`);
         });
     }
 }
