@@ -33,3 +33,38 @@ export const loginSchema = Joi.object({
         password: Joi.string().required(),
     }),
 }).required();
+
+export const amountSchema = Joi.object({
+    body: Joi.object({
+        amount: Joi.number().required(),
+    }),
+}).required();
+
+export const withdrawSchema = Joi.object({
+    body: Joi.object({
+        amount: Joi.number().required(),
+        pin: Joi.string()
+            .pattern(/^\d{4}$/)
+            .required()
+            .messages({
+                "string.pattern.base": "PIN must be 4 digits.",
+                "string.empty": "PIN is required.",
+            })
+            .required(),
+    }),
+}).required();
+
+export const transferSchema = Joi.object({
+    body: Joi.object({
+        amount: Joi.number().required(),
+        pin: Joi.string()
+            .pattern(/^\d{4}$/)
+            .required()
+            .messages({
+                "string.pattern.base": "PIN must be 4 digits.",
+                "string.empty": "PIN is required.",
+            })
+            .required(),
+        receiverWalletId: Joi.string().required(),
+    }),
+}).required();
