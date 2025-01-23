@@ -11,7 +11,6 @@ export const Tables = {
     Wallet: "wallets",
     Transaction: "transactions",
 } as const;
-// type Table = (typeof Tables)[keyof typeof Tables];
 
 // Table Types
 export const TransactionType = {
@@ -19,7 +18,6 @@ export const TransactionType = {
     Withdrawal: "withdrawal",
     Transfer: "transfer",
 } as const;
-// type Table = (typeof Tables)[keyof typeof Tables];
 
 export interface IUserSignUp {
     email: string;

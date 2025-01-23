@@ -1,4 +1,3 @@
-import { ValidationError } from "joi";
 import { MakeResponse } from "../typings/customs";
 import { Response } from "express";
 
@@ -38,12 +37,4 @@ export const errorResponse = (
         status: false,
         error: `${message}!`,
     });
-};
-
-export const handleValidationError = (
-    validateErrorData: ValidationError,
-    res: Response
-): Response => {
-    const message = validateErrorData.details[0]!.message;
-    return errorResponse(res, message, 400);
 };
