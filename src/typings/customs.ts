@@ -9,6 +9,15 @@ export interface MakeResponse<T = Record<string, any>> {
 export const Tables = {
     User: "users",
     Wallet: "wallets",
+    Transaction: "transactions",
+} as const;
+// type Table = (typeof Tables)[keyof typeof Tables];
+
+// Table Types
+export const TransactionType = {
+    Deposit: "deposit",
+    Withdrawal: "withdrawal",
+    Transfer: "transfer",
 } as const;
 // type Table = (typeof Tables)[keyof typeof Tables];
 

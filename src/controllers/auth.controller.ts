@@ -46,22 +46,40 @@ export default class AuthController {
         const userId = uuidv4();
         await insertIntoDB(Tables.User, {
             id: userId,
-            email,
+            email: email.toLowerCase(),
             password: hashedPassword,
             fullname,
             pin: hashedPin,
         });
 
         // create user wallet
-        insertIntoDB(Tables.Wallet, {
+        await insertIntoDB(Tables.Wallet, {
             id: uuidv4(),
             user_id: userId,
         });
 
+        // Retrieve create user
+        const users = await db(Tables.User)
+            .join(Tables.Wallet, "users.id", "=", "wallets.user_id")
+            .select(
+                "users.id",
+                "users.fullname",
+                "users.email",
+                { wallet_id: "wallets.id" },
+                "wallets.balance"
+            )
+            .where({ email });
+
+        const user = users[0];
+
+        // generate access
+        const jwt = new JWT();
+        const accessToken = jwt.accessToken({ userId: user.id });
+
         return successResponse(
             res,
             "user registered successfully",
-            undefined,
+            { user, accessToken },
             201
         );
     };
@@ -71,7 +89,9 @@ export default class AuthController {
         const { email, password } = payload;
 
         // check for user in database
-        const users = await db("users").where("email", email);
+        const users = await fetchFromDB(Tables.User, {
+            email: email.toLowerCase(),
+        });
         const user = users[0];
         if (!user) {
             return errorResponse(res, "Invalid email or password", 404);
@@ -92,7 +112,6 @@ export default class AuthController {
             "user logged in successfully",
             {
                 accessToken,
-                userId: user.id,
             },
             201
         );
