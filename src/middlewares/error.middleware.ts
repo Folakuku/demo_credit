@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import logger from "../config/logger";
+import Joi from "joi";
 
 const errorMiddleware = (
     err: Error,
@@ -6,8 +8,18 @@ const errorMiddleware = (
     res: Response,
     next: NextFunction
 ) => {
-    console.error(err.message);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    logger.logErrorToConsole(err);
+    if (Joi.isError(err)) {
+        res.status(400).json({
+            status: false,
+            message: err.message,
+        });
+    } else {
+        res.status(500).json({
+            status: false,
+            message: err.message || "Internal Server Error",
+        });
+    }
 };
 
 export default errorMiddleware;
