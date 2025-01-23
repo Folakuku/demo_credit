@@ -35,12 +35,18 @@ export const loginSchema = Joi.object({
 }).required();
 
 export const amountSchema = Joi.object({
+    params: Joi.object({
+        walletId: Joi.string().required(),
+    }),
     body: Joi.object({
         amount: Joi.number().required(),
     }),
 }).required();
 
 export const withdrawSchema = Joi.object({
+    params: Joi.object({
+        walletId: Joi.string().required(),
+    }),
     body: Joi.object({
         amount: Joi.number().required(),
         pin: Joi.string()
@@ -55,6 +61,9 @@ export const withdrawSchema = Joi.object({
 }).required();
 
 export const transferSchema = Joi.object({
+    params: Joi.object({
+        walletId: Joi.string().required(),
+    }),
     body: Joi.object({
         amount: Joi.number().required(),
         pin: Joi.string()

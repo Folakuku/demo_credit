@@ -18,18 +18,18 @@ class UserRoutes {
         this.router.get("/", asyncHandler(this.walletController.getWallets));
 
         this.router.post(
-            "/fund",
-            validate(schemas.amountSchema, { body: true }),
+            "/:walletId/fund",
+            validate(schemas.amountSchema, { params: true, body: true }),
             asyncHandler(this.walletController.fundWallet)
         );
         this.router.post(
-            "/withdraw",
-            validate(schemas.withdrawSchema, { body: true }),
+            "/:walletId/withdraw",
+            validate(schemas.withdrawSchema, { params: true, body: true }),
             asyncHandler(this.walletController.withdraw)
         );
         this.router.post(
-            "/transfer",
-            validate(schemas.transferSchema, { body: true }),
+            "/:walletId/transfer",
+            validate(schemas.transferSchema, { params: true, body: true }),
             asyncHandler(this.walletController.transfer)
         );
     }

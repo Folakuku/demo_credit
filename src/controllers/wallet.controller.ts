@@ -28,11 +28,20 @@ export default class WalletController {
         //Use a database transaction to handle the fund operation
         await db.transaction(async (trx) => {
             const wallet = await trx(Tables.Wallet)
-                .where({ user_id: userId })
+                .where({ id: req.params.walletId })
                 .forUpdate()
                 .first();
+
             if (!wallet) {
                 return errorResponse(res, "Wallet not found", 404);
+            }
+
+            if (wallet.user_id !== userId) {
+                return errorResponse(
+                    res,
+                    "You are not authorized to proceed",
+                    403
+                );
             }
 
             // Increase wallet balance
@@ -70,12 +79,20 @@ export default class WalletController {
         //Use a database transaction to handle the fund operation
         await db.transaction(async (trx) => {
             const wallet = await trx(Tables.Wallet)
-                .where({ user_id: userId })
+                .where({ id: req.params.walletId })
                 .forUpdate()
                 .first();
 
             if (!wallet) {
                 return errorResponse(res, "Wallet not found", 404);
+            }
+
+            if (wallet.user_id !== userId) {
+                return errorResponse(
+                    res,
+                    "You are not authorized to proceed",
+                    403
+                );
             }
 
             if (parseFloat(wallet.balance) < amountFloat) {
@@ -114,12 +131,28 @@ export default class WalletController {
         //Use a database transaction to handle the fund operation
         await db.transaction(async (trx) => {
             const wallet = await trx(Tables.Wallet)
-                .where({ user_id: userId })
+                .where({ id: req.params.walletId })
                 .forUpdate()
                 .first();
 
             if (!wallet) {
                 return errorResponse(res, "Wallet not found", 404);
+            }
+
+            if (wallet.user_id !== userId) {
+                return errorResponse(
+                    res,
+                    "You are not authorized to proceed",
+                    403
+                );
+            }
+
+            if (wallet.id === receiverWalletId) {
+                return errorResponse(
+                    res,
+                    "You cannot transfer to yourself",
+                    400
+                );
             }
 
             if (parseFloat(wallet.balance) < amountFloat) {
@@ -157,7 +190,7 @@ export default class WalletController {
                 amount,
             });
 
-            return successResponse(res, "Wallet withdrawal successful");
+            return successResponse(res, "Transfer successful");
         });
     };
 }
