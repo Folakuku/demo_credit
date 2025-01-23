@@ -9,6 +9,11 @@ export async function up(knex: Knex): Promise<void> {
             .references("id")
             .inTable("wallets")
             .onDelete("CASCADE");
+        table
+            .uuid("receiver_wallet_id")
+            .references("id")
+            .inTable("wallets")
+            .onDelete("CASCADE");
         table.enum("type", ["deposit", "withdrawal", "transfer"]).notNullable();
         table.decimal("amount", 12, 2).notNullable();
         table.timestamps(true, true);
