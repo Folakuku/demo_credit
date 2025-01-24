@@ -113,7 +113,7 @@ export default class AuthController {
             {
                 accessToken,
             },
-            201
+            200
         );
     }
 }
