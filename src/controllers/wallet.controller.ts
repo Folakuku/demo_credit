@@ -5,9 +5,23 @@ import { TransactionType } from "../typings/customs";
 import db from "../db/knex";
 import { Tables } from "../typings/customs";
 import { compareHash } from "../helpers/utils";
+import { fetchFromDB } from "../helpers/db";
 
 export default class WalletController {
     public getWallets = async (req: Request, res: Response) => {
+        const wallets = await db(Tables.Wallet)
+            .join(Tables.User, { "users.id": "wallets.user_id" })
+            .select(
+                "wallets.id",
+                { user_id: "users.id" },
+                "users.fullname",
+                "users.email"
+            );
+
+        return successResponse(res, "Wallets fetched", { wallets });
+    };
+
+    public getUserWallet = async (req: Request, res: Response) => {
         const wallets = await db(Tables.Wallet)
             .join(Tables.User, { "users.id": "wallets.user_id" })
             .select(
@@ -16,9 +30,20 @@ export default class WalletController {
                 { user_id: "users.id" },
                 "users.fullname",
                 "users.email"
-            );
+            )
+            .where({ "wallets.id": req.params.walletId });
 
-        return successResponse(res, "Wallets fetched", { wallets });
+        const wallet = wallets[0];
+
+        if (!wallet) {
+            return errorResponse(res, "Wallet not found", 404);
+        }
+
+        if (wallet.user_id !== req.user.id) {
+            return errorResponse(res, "You are not authorized to proceed", 403);
+        }
+
+        return successResponse(res, "Wallet fetched", { wallet });
     };
 
     public fundWallet = async (req: Request, res: Response) => {
@@ -59,7 +84,13 @@ export default class WalletController {
                 amount,
             });
 
-            return successResponse(res, "Wallet credited successfully");
+            const updatedWallet = await trx(Tables.Wallet).where({
+                id: wallet.id,
+            });
+
+            return successResponse(res, "Wallet credited successfully", {
+                wallet: updatedWallet[0],
+            });
         });
     };
 
@@ -112,7 +143,13 @@ export default class WalletController {
                 amount,
             });
 
-            return successResponse(res, "Wallet withdrawal successful");
+            const updatedWallet = await trx(Tables.Wallet).where({
+                id: wallet.id,
+            });
+
+            return successResponse(res, "Wallet withdrawal successful", {
+                wallet: updatedWallet[0],
+            });
         });
     };
 
@@ -190,7 +227,40 @@ export default class WalletController {
                 amount,
             });
 
-            return successResponse(res, "Transfer successful");
+            const updatedWallet = await trx(Tables.Wallet).where({
+                id: wallet.id,
+            });
+
+            return successResponse(res, "Wallet transfer successful", {
+                wallet: updatedWallet[0],
+            });
+        });
+    };
+
+    public getWalletTransactions = async (req: Request, res: Response) => {
+        const wallets = await db(Tables.Wallet)
+            .select("wallets.id", "wallets.user_id")
+            .where({ "wallets.id": req.params.walletId });
+
+        const wallet = wallets[0];
+        if (wallet.user_id !== req.user.id) {
+            return errorResponse(res, "You are not authorized to proceed", 403);
+        }
+
+        const transactions = await fetchFromDB(Tables.Transaction, {
+            "transactions.wallet_id": wallet.id,
+        });
+
+        if (!wallet) {
+            return errorResponse(res, "Wallet not found", 404);
+        }
+
+        if (wallet.user_id !== req.user.id) {
+            return errorResponse(res, "You are not authorized to proceed", 403);
+        }
+
+        return successResponse(res, "Wallet transactions fetched", {
+            transactions,
         });
     };
 }

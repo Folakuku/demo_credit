@@ -17,20 +17,33 @@ class UserRoutes {
     private initializeRoutes() {
         this.router.get("/", asyncHandler(this.walletController.getWallets));
 
+        this.router.get(
+            "/:walletId",
+            // validate(schemas.amountSchema, { params: true, body: true }),
+            asyncHandler(this.walletController.getUserWallet)
+        );
+
         this.router.put(
             "/:walletId/fund",
             validate(schemas.amountSchema, { params: true, body: true }),
             asyncHandler(this.walletController.fundWallet)
         );
+
         this.router.put(
             "/:walletId/withdraw",
             validate(schemas.withdrawSchema, { params: true, body: true }),
             asyncHandler(this.walletController.withdraw)
         );
+
         this.router.put(
             "/:walletId/transfer",
             validate(schemas.transferSchema, { params: true, body: true }),
             asyncHandler(this.walletController.transfer)
+        );
+
+        this.router.get(
+            "/:walletId/transactions",
+            asyncHandler(this.walletController.getWalletTransactions)
         );
     }
 }
