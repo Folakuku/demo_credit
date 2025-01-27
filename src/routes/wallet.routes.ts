@@ -19,7 +19,6 @@ class UserRoutes {
 
         this.router.get(
             "/:walletId",
-            // validate(schemas.amountSchema, { params: true, body: true }),
             asyncHandler(this.walletController.getUserWallet)
         );
 

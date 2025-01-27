@@ -1,4 +1,3 @@
-import logger from "../config/logger";
 import { NextFunction, Request, Response } from "express";
 import { fetchFromDB } from "../helpers/db";
 import JWT from "../helpers/jwt";
