@@ -10,7 +10,8 @@ export async function up(knex: Knex): Promise<void> {
             .inTable("users")
             .onDelete("CASCADE");
         table.decimal("balance", 12, 2).notNullable().defaultTo(0);
-        table.timestamps(true, true);
+        table.dateTime('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'))
+        table.dateTime('updated_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
     });
 }
 
